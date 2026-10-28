@@ -1,12 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { CONTENT_MAX_LENGTH, DEFAULT_AUTHOR, TITLE_MAX_LENGTH } from '../../lib/constants';
 import { Button } from '../Button/Button';
 import { CharacterCounter } from '../CharacterCounter/CharacterCounter';
 import { Toggle } from '../Toggle/Toggle';
 import styles from './UpdateForm.module.css';
-
-const TITLE_MAX_LENGTH = 100;
-const CONTENT_MAX_LENGTH = 10_000;
-const DEFAULT_AUTHOR = 'Petra Petitionsstarterin';
 
 export function UpdateForm() {
   const [title, setTitle] = useState('');
