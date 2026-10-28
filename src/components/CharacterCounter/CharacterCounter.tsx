@@ -17,10 +17,7 @@ export function CharacterCounter({ id, current, max }: CharacterCounterProps) {
       data-exceeded={isExceeded || undefined}
       aria-invalid={isExceeded ? 'true' : undefined}
     >
-      <span className={styles.current}>{formatNumber(current)}</span>
-      {' / '}
-      <span className={styles.max}>{formatNumber(max)}</span>
-      {' Zeichen'}
+      {`${formatNumber(current)} / ${formatNumber(max)} Zeichen`}
     </p>
   );
 }

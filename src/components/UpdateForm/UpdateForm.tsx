@@ -4,8 +4,10 @@ import {
   DEFAULT_AUTHOR,
   TITLE_MAX_LENGTH,
 } from '../../constants'
+import { formatTime } from '../../lib/format'
+import { saveDraft } from '../../lib/storage'
 import { hasErrors, validateForm } from '../../lib/validation'
-import type { FieldName, FormErrors } from '../../types'
+import type { FieldName, FormErrors, PetitionUpdateDraft } from '../../types'
 import { Button } from '../Button/Button'
 import { CharacterCounter } from '../CharacterCounter/CharacterCounter'
 import { Toggle } from '../Toggle/Toggle'
@@ -18,6 +20,8 @@ export function UpdateForm() {
   const [customAuthor, setCustomAuthor] = useState('')
 
   const [errors, setErrors] = useState<FormErrors>({})
+  const [savedAt, setSavedAt] = useState<string | null>(null)
+  const [storageError, setStorageError] = useState<string | null>(null)
 
   const authorInputRef = useRef<HTMLInputElement>(null)
   const ids = useFieldIds()
@@ -30,8 +34,11 @@ export function UpdateForm() {
     }
   }, [hasCustomAuthor])
 
-  function clearError(field: FieldName) {
-    setErrors((previous) => {
+
+  function clearFeedback(field: FieldName) {
+    setSavedAt(null)
+    setStorageError(null)
+    setErrors((previous: any) => {
       if (previous[field] === undefined) return previous
       const next = { ...previous }
       delete next[field]
@@ -41,16 +48,43 @@ export function UpdateForm() {
 
   function handleToggleAuthor(checked: boolean) {
     setHasCustomAuthor(checked)
-    clearError('author')
+    clearFeedback('author')
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSaveDraft(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setErrors(validateForm({ title, content, author }))
+
+    const nextErrors = validateForm({ title, content, author })
+    setErrors(nextErrors)
+
+    if (hasErrors(nextErrors)) {
+      setSavedAt(null)
+      setStorageError(null)
+      return
+    }
+
+    const draft: PetitionUpdateDraft = {
+      title: title.trim(),
+      content: content.trim(),
+      author: author.trim(),
+      hasCustomAuthor,
+      savedAt: new Date().toISOString(),
+    }
+
+    try {
+      saveDraft(draft)
+      setSavedAt(draft.savedAt)
+      setStorageError(null)
+    } catch {
+      setSavedAt(null)
+      setStorageError(
+        'Dein Entwurf konnte nicht gespeichert werden. Bitte prüfe die Speicher-Einstellungen deines Browsers.',
+      )
+    }
   }
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit} noValidate>
+    <form className={styles.form} onSubmit={handleSaveDraft} noValidate>
       <div className={styles.field}>
         <label className={styles.label} htmlFor={ids.title}>
           Titel
@@ -68,7 +102,7 @@ export function UpdateForm() {
           aria-invalid={errors.title ? true : undefined}
           onChange={(event) => {
             setTitle(event.target.value)
-            clearError('title')
+            clearFeedback('title')
           }}
         />
         <CharacterCounter
@@ -97,7 +131,7 @@ export function UpdateForm() {
           aria-invalid={errors.content ? true : undefined}
           onChange={(event) => {
             setContent(event.target.value)
-            clearError('content')
+            clearFeedback('content')
           }}
         />
         <CharacterCounter
@@ -138,7 +172,7 @@ export function UpdateForm() {
           aria-invalid={errors.author ? true : undefined}
           onChange={(event) => {
             setCustomAuthor(event.target.value)
-            clearError('author')
+            clearFeedback('author')
           }}
         />
         <FieldError id={ids.authorError} message={errors.author} />
@@ -157,6 +191,17 @@ export function UpdateForm() {
       </div>
 
       <div className={styles.feedback}>
+        {savedAt && (
+          <p className={styles.success} role="status">
+            <CheckIcon />
+            Dein Entwurf wurde um {formatTime(savedAt)} Uhr gespeichert.
+          </p>
+        )}
+        {storageError && (
+          <p className={styles.formError} role="alert">
+            {storageError}
+          </p>
+        )}
         {hasErrors(errors) && (
           <p className={styles.formError} role="alert">
             Bitte fülle alle Felder aus, um deinen Entwurf zu speichern.
@@ -180,6 +225,27 @@ function FieldError({ id, message }: { id: string; message?: string }) {
     </p>
   )
 }
+
+function CheckIcon() {
+  return (
+    <svg
+      className={styles.checkIcon}
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M3 8.5 L6.5 12 L13 4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 
 function useFieldIds() {
   const prefix = useId()

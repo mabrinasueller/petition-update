@@ -1,124 +1,149 @@
 .form {
-    margin-top: 1.25rem;
+  margin-top: 1.25rem;
 }
 
-.field+.field {
-    margin-top: 1rem;
+.field + .field {
+  margin-top: 1rem;
 }
 
 .label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-family: var(--font-medium);
-    font-size: var(--font-size-title-xs);
-    font-weight: 500;
-    color: var(--color-text);
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-medium);
+  font-size: var(--font-size-title-xs);
+  font-weight: 500;
+  color: var(--color-text);
 }
 
 .smallLabel {
-    display: block;
-    margin-bottom: 0.25rem;
-    font-size: var(--font-size-caption);
-    color: var(--color-text);
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: var(--font-size-caption);
+  color: var(--color-text);
 }
 
 .input,
 .textarea {
-    display: block;
-    width: 100%;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-control);
-    background-color: var(--color-surface);
-    font-family: inherit;
-    font-size: 1rem;
-    color: var(--color-text);
+  display: block;
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background-color: var(--color-surface);
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--color-text);
 }
 
 .input {
-    height: 48px;
-    padding: 0 1rem;
+  height: 48px;
+  padding: 0 1rem;
 }
 
 .textarea {
-    min-height: 6.5rem;
-    padding: 0.75rem 1rem;
-    line-height: 1.45;
-    resize: vertical;
+  min-height: 6.5rem;
+  padding: 0.75rem 1rem;
+  line-height: 1.45;
+  resize: vertical;
 }
 
 .input::placeholder,
 .textarea::placeholder {
-    color: var(--color-text-muted);
+  color: var(--color-text-muted);
 }
 
 .input:focus-visible,
 .textarea:focus-visible {
-    outline: 2px solid var(--color-focus);
-    outline-offset: 1px;
-    border-color: var(--color-focus);
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+  border-color: var(--color-focus);
 }
 
-/* The author field while the toggle is off: clearly inert, still readable. */
 .input[data-readonly] {
-    border-color: var(--color-readonly-border);
-    background-color: var(--color-readonly-bg);
-    color: var(--color-text-muted);
-    cursor: default;
+  border-color: var(--color-readonly-border);
+  background-color: var(--color-readonly-bg);
+  color: var(--color-text-muted);
+  cursor: default;
+}
+
+.input[aria-invalid],
+.textarea[aria-invalid] {
+  border-color: var(--color-error);
 }
 
 .authorHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .authorHeader .label {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .hint {
-    margin: 0.5rem 0 1rem;
-    font-size: var(--font-size-body-sm);
-    line-height: 1.45;
-    color: var(--color-text);
+  margin: 0.5rem 0 1rem;
+  font-size: var(--font-size-body-sm);
+  line-height: 1.45;
+  color: var(--color-text);
 }
 
 .fieldError {
-    margin: 0.3rem 0 0;
-    font-size: var(--font-size-body-sm);
-    color: var(--color-error);
+  margin: 0.3rem 0 0;
+  font-size: var(--font-size-body-sm);
+  color: var(--color-error);
 }
 
 .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
 }
 
 .feedback:not(:empty) {
-    margin-top: 1rem;
+  margin-top: 1rem;
+}
+
+.success,
+.formError {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--radius-control);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.success {
+  border: 1px solid var(--color-success-border);
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
 }
 
 .formError {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0;
-    padding: 0.625rem 0.75rem;
-    border: 1px solid var(--color-error-border);
-    border-radius: var(--radius-control);
-    background-color: var(--color-error-bg);
-    color: var(--color-error);
-    font-size: 0.875rem;
-    line-height: 1.4;
+  border: 1px solid var(--color-error-border);
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.success + .formError,
+.formError + .formError {
+  margin-top: 0.5rem;
+}
+
+.checkIcon {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
 }
 
 @media (max-width: 36rem) {
-    .actions {
-        flex-direction: column;
-        align-items: stretch;
-    }
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

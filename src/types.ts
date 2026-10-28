@@ -7,3 +7,8 @@ export interface UpdateFormValues {
 export type FieldName = keyof UpdateFormValues;
 
 export type FormErrors = Partial<Record<FieldName, string>>;
+
+export interface PetitionUpdateDraft extends UpdateFormValues {
+  hasCustomAuthor: boolean
+  savedAt: string
+}

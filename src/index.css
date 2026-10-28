@@ -27,6 +27,9 @@
   --color-error: #b3261e;
   --color-error-bg: #fdeceb;
   --color-error-border: #f2c3c0;
+  --color-success: #1b6b43;
+  --color-success-bg: #e9f5ee;
+  --color-success-border: #bfe0cd;
   --radius-modal: 16px;
   --radius-control: 6px;
   --radius-pill: 999px;
