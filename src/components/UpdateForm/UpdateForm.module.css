@@ -2,7 +2,6 @@
     margin-top: 1.25rem;
 }
 
-/* Figma spaces the fields 16px apart. */
 .field+.field {
     margin-top: 1rem;
 }
@@ -13,6 +12,13 @@
     font-family: var(--font-medium);
     font-size: var(--font-size-title-xs);
     font-weight: 500;
+    color: var(--color-text);
+}
+
+.smallLabel {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: var(--font-size-caption);
     color: var(--color-text);
 }
 
@@ -50,4 +56,44 @@
     outline: 2px solid var(--color-focus);
     outline-offset: 1px;
     border-color: var(--color-focus);
+}
+
+.input[data-readonly] {
+    border-color: var(--color-readonly-border);
+    background-color: var(--color-readonly-bg);
+    color: var(--color-text-muted);
+    cursor: default;
+}
+
+.authorHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.authorHeader .label {
+    margin-bottom: 0;
+}
+
+.hint {
+    margin: 0.5rem 0 1rem;
+    font-size: var(--font-size-body-sm);
+    line-height: 1.45;
+    color: var(--color-text);
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 36rem) {
+    .actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
