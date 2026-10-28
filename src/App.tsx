@@ -1,9 +1,10 @@
-import { Modal } from "./components/Modal";
+import { Modal } from "./components/Modal/Modal";
+import { UpdateForm } from "./components/UpdateForm/UpdateForm";
 
 export default function App() {
   return (
     <Modal title="Neues Update erstellen">
-      <p>Formular folgt</p>
+      <UpdateForm />
     </Modal>
   );
 }
