@@ -14,7 +14,10 @@ function getContentInput() {
   return screen.getByLabelText('Deine Neuigkeiten')
 }
 
-/** The author field and its section heading share the label text "Absender". */
+/**
+ * "Absender" appears twice by design: as the group label of the author
+ * section (role="group") and as the field label of the input inside it.
+ */
 function getAuthorInput() {
   return screen.getByRole('textbox', { name: 'Absender' })
 }
@@ -36,7 +39,9 @@ describe('UpdateForm – validation', () => {
 
     await user.click(screen.getByRole('button', { name: 'Entwurf speichern' }))
 
-    expect(screen.getByText(/Bitte gib deinem Update einen Titel/)).toBeVisible()
+    expect(
+      screen.getByText(/Bitte gib deinem Update einen Titel/),
+    ).toBeVisible()
     expect(screen.getByText(/Bitte schreibe ein paar Worte/)).toBeVisible()
     expect(getSavedDraft()).toBeNull()
   })
@@ -69,13 +74,34 @@ describe('UpdateForm – validation', () => {
     render(<UpdateForm />)
 
     await user.click(screen.getByRole('button', { name: 'Entwurf speichern' }))
-    expect(screen.getByText(/Bitte gib deinem Update einen Titel/)).toBeVisible()
+    expect(
+      screen.getByText(/Bitte gib deinem Update einen Titel/),
+    ).toBeVisible()
 
     await user.type(getTitleInput(), 'Ein Titel')
 
     expect(
       screen.queryByText(/Bitte gib deinem Update einen Titel/),
     ).not.toBeInTheDocument()
+  })
+
+  it('moves focus to the first invalid field on a failed submit', async () => {
+    const user = userEvent.setup()
+    render(<UpdateForm />)
+
+    await user.click(screen.getByRole('button', { name: 'Entwurf speichern' }))
+
+    expect(getTitleInput()).toHaveFocus()
+  })
+
+  it('focuses the content field when only the title is valid', async () => {
+    const user = userEvent.setup()
+    render(<UpdateForm />)
+
+    await user.type(getTitleInput(), 'Ein Titel')
+    await user.click(screen.getByRole('button', { name: 'Entwurf speichern' }))
+
+    expect(getContentInput()).toHaveFocus()
   })
 })
 
@@ -99,6 +125,19 @@ describe('UpdateForm – character counters', () => {
 })
 
 describe('UpdateForm – author toggle', () => {
+  it('groups the author section and describes the input with the hint', () => {
+    render(<UpdateForm />)
+
+    const group = screen.getByRole('group', { name: 'Absender' })
+    expect(group).toContainElement(getAuthorInput())
+    expect(getAuthorInput()).toHaveAccessibleDescription(
+      /unter einem anderen Namen/,
+    )
+    expect(
+      screen.getByRole('switch', { name: 'Absender ändern' }),
+    ).toHaveAccessibleDescription(/unter einem anderen Namen/)
+  })
+
   it('shows the petition starter as a read-only author by default', () => {
     render(<UpdateForm />)
 
@@ -224,6 +263,25 @@ describe('UpdateForm – saving a draft', () => {
 })
 
 describe('Modal', () => {
+  it('moves focus to its heading when it opens', () => {
+    render(<App />)
+
+    expect(
+      screen.getByRole('heading', { name: 'Neues Update erstellen' }),
+    ).toHaveFocus()
+  })
+
+  it('keeps the close button reachable but announced as disabled', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    const close = screen.getByRole('button', { name: 'Schließen' })
+    expect(close).toHaveAttribute('aria-disabled', 'true')
+
+    await user.tab()
+    expect(close).toHaveFocus()
+  })
+
   it('stays open when any button inside it is clicked', async () => {
     const user = userEvent.setup()
     render(<App />)

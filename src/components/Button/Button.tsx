@@ -1,14 +1,12 @@
-import type { ButtonHTMLAttributes } from "react";
-import styles from "./Button.module.css";
+import type { ButtonHTMLAttributes } from 'react'
+import styles from './Button.module.css'
 
-type ButtonVariant = "outline" | "primary" | "accent";
+type ButtonVariant = 'outline' | 'primary' | 'accent'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant: ButtonVariant;
+  variant: ButtonVariant
 }
 
 export function Button({ variant, ...props }: ButtonProps) {
-  return (
-    <button {...props} className={`${styles.button} ${styles[variant]}`} />
-  );
+  return <button {...props} className={`${styles.button} ${styles[variant]}`} />
 }

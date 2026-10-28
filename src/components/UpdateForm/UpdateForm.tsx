@@ -23,6 +23,8 @@ export function UpdateForm() {
   const [savedAt, setSavedAt] = useState<string | null>(null)
   const [storageError, setStorageError] = useState<string | null>(null)
 
+  const titleInputRef = useRef<HTMLInputElement>(null)
+  const contentInputRef = useRef<HTMLTextAreaElement>(null)
   const authorInputRef = useRef<HTMLInputElement>(null)
   const ids = useFieldIds()
 
@@ -34,11 +36,10 @@ export function UpdateForm() {
     }
   }, [hasCustomAuthor])
 
-
   function clearFeedback(field: FieldName) {
     setSavedAt(null)
     setStorageError(null)
-    setErrors((previous: any) => {
+    setErrors((previous) => {
       if (previous[field] === undefined) return previous
       const next = { ...previous }
       delete next[field]
@@ -60,6 +61,7 @@ export function UpdateForm() {
     if (hasErrors(nextErrors)) {
       setSavedAt(null)
       setStorageError(null)
+      focusFirstInvalidField(nextErrors)
       return
     }
 
@@ -83,6 +85,26 @@ export function UpdateForm() {
     }
   }
 
+  /**
+   * After a failed submit, a sighted user sees the red fields — a keyboard or
+   * screen-reader user is still parked on the button. Moving focus to the
+   * first invalid field (in visual order) takes them straight to the problem
+   * and announces its error via `aria-describedby`.
+   */
+  function focusFirstInvalidField(nextErrors: FormErrors) {
+    const fieldRefs = {
+      title: titleInputRef,
+      content: contentInputRef,
+      author: authorInputRef,
+    }
+    const firstInvalid = (['title', 'content', 'author'] as const).find(
+      (field) => nextErrors[field],
+    )
+    if (firstInvalid) {
+      fieldRefs[firstInvalid].current?.focus()
+    }
+  }
+
   return (
     <form className={styles.form} onSubmit={handleSaveDraft} noValidate>
       <div className={styles.field}>
@@ -91,6 +113,7 @@ export function UpdateForm() {
         </label>
         <input
           id={ids.title}
+          ref={titleInputRef}
           className={styles.input}
           type="text"
           value={title}
@@ -119,6 +142,7 @@ export function UpdateForm() {
         </label>
         <textarea
           id={ids.content}
+          ref={contentInputRef}
           className={styles.textarea}
           value={content}
           rows={5}
@@ -142,17 +166,27 @@ export function UpdateForm() {
         <FieldError id={ids.contentError} message={errors.content} />
       </div>
 
-      <div className={styles.field}>
+      {/* Semantically a fieldset, but a real <legend> cannot sit in the flex
+          header row next to the toggle, so the grouping is expressed via
+          role="group" instead — identical in the accessibility tree. */}
+      <div
+        className={styles.field}
+        role="group"
+        aria-labelledby={ids.authorGroup}
+      >
         <div className={styles.authorHeader}>
-          <span className={styles.label}>Absender</span>
+          <span id={ids.authorGroup} className={styles.label}>
+            Absender
+          </span>
           <Toggle
             id={ids.authorToggle}
             label="Absender ändern"
             checked={hasCustomAuthor}
+            describedBy={ids.authorHint}
             onChange={handleToggleAuthor}
           />
         </div>
-        <p className={styles.hint}>
+        <p id={ids.authorHint} className={styles.hint}>
           Hier hast du die Option, das Update unter einem anderen Namen zu
           veröffentlichen.
         </p>
@@ -167,8 +201,13 @@ export function UpdateForm() {
           type="text"
           value={author}
           readOnly={!hasCustomAuthor}
-          placeholder={hasCustomAuthor ? 'z. B. Initiative Stadtgrün' : undefined}
-          aria-describedby={errors.author ? ids.authorError : undefined}
+          placeholder={
+            hasCustomAuthor ? 'z. B. Initiative Stadtgrün' : undefined
+          }
+          aria-describedby={describedBy(
+            ids.authorHint,
+            errors.author && ids.authorError,
+          )}
           aria-invalid={errors.author ? true : undefined}
           onChange={(event) => {
             setCustomAuthor(event.target.value)
@@ -179,6 +218,9 @@ export function UpdateForm() {
       </div>
 
       <div className={styles.actions}>
+        {/* "Abbrechen" and "Update veröffentlichen" are intentionally inert:
+            the brief only asks for saving a draft, and the modal never
+            closes. They stay enabled because the design shows them as active. */}
         <Button type="button" variant="outline">
           Abbrechen
         </Button>
@@ -246,7 +288,6 @@ function CheckIcon() {
   )
 }
 
-
 function useFieldIds() {
   const prefix = useId()
   return {
@@ -257,6 +298,8 @@ function useFieldIds() {
     contentCounter: `${prefix}-content-counter`,
     contentError: `${prefix}-content-error`,
     author: `${prefix}-author`,
+    authorGroup: `${prefix}-author-group`,
+    authorHint: `${prefix}-author-hint`,
     authorToggle: `${prefix}-author-toggle`,
     authorError: `${prefix}-author-error`,
   }

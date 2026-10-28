@@ -90,8 +90,16 @@ failure is surfaced instead of silently losing the draft.
 typing their first character is noisy; validating only on submit means they
 cannot tell whether a fix worked. Submit-then-live is the middle ground.
 
-**Accessibility.** The dialog is labelled by its heading, counters are linked to their inputs via `aria-describedby` (rather than a live region, which would
-announce on every keystroke), invalid fields carry `aria-invalid`, the toggle is a real checkbox with `role="switch"`, and focus moves into the author field the moment it becomes editable.
+**Accessibility.** The dialog is labelled by its heading and moves focus to it
+on open; a failed submit moves focus to the first invalid field. Counters are
+linked to their inputs via `aria-describedby` (rather than a live region, which
+would announce on every keystroke), invalid fields carry `aria-invalid`, the
+toggle is a real checkbox with `role="switch"`, and focus moves into the author
+field the moment it becomes editable. The close button uses `aria-disabled`
+instead of `disabled`, so keyboard users can still reach the affordance they can
+see. `aria-modal` holds here because the dialog is the entire page; embedded in
+a real page it would need a focus trap (ideally a native `<dialog>` with
+`showModal()`).
 
 **Styling** is plain CSS via CSS Modules — scoped class names and no extra
 dependency. Colours, the type scale and radii live as custom properties in
@@ -107,10 +115,11 @@ Given the time constraints I refrained from using a CSS library. While I work wi
   One of the biggest issue in my opinion. Hard coding values is never a good or sustainable idea
 - **Warning before closing the modal and losing unsaved changes**
 - **Adding End-to-end tests**
+- **Use Prettier from the beginning (obviously)**
 
 ## Tests
 
-26 tests with Vitest and Testing Library, covering the validation rules, the
+31 tests with Vitest and Testing Library, covering the validation rules, the
 character limits and counters, the author toggle's read-only and restore
 behaviour, the Local Storage write, and the requirement that the modal stays
 open. Tests query by role and label rather than by class, so they describe

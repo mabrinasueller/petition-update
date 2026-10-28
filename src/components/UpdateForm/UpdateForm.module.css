@@ -61,7 +61,7 @@
 .input[data-readonly] {
   border-color: var(--color-readonly-border);
   background-color: var(--color-readonly-bg);
-  color: var(--color-text-muted);
+  color: var(--color-text);
   cursor: default;
 }
 

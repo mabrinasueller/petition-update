@@ -1,5 +1,5 @@
 :root {
-  /* The Söhne family is served as separate families per weight, so each needs      an explicit font-family rather than just a font-weight. */
+  /* The Söhne family is served as separate families per weight, so each needs an explicit font-family rather than just a font-weight. */
   --font-body: 'Soehne Buch', system-ui, -apple-system, sans-serif;
   --font-medium: 'Soehne Kraeftig', system-ui, -apple-system, sans-serif;
   --font-bold: 'Soehne Dreiviertelfett', system-ui, -apple-system, sans-serif;
@@ -53,7 +53,6 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
