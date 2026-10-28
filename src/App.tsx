@@ -1,3 +1,9 @@
-export default function App() { 
-  return <h1 style={{ color: '#fff' }}>Neues Update erstellen</h1> 
+import { Modal } from "./components/Modal";
+
+export default function App() {
+  return (
+    <Modal title="Neues Update erstellen">
+      <p>Formular folgt</p>
+    </Modal>
+  );
 }
