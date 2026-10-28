@@ -58,11 +58,21 @@
     border-color: var(--color-focus);
 }
 
+/* The author field while the toggle is off: clearly inert, still readable. */
 .input[data-readonly] {
     border-color: var(--color-readonly-border);
     background-color: var(--color-readonly-bg);
     color: var(--color-text-muted);
     cursor: default;
+}
+
+/* Zähler sitzt rechtsbündig direkt unter dem Feld. */
+.counter {
+    margin: 0.25rem 0 0;
+    font-size: var(--font-size-caption);
+    line-height: 1.4;
+    text-align: right;
+    color: var(--color-text-muted);
 }
 
 .authorHeader {
