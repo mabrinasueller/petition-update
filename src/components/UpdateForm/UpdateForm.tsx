@@ -1,13 +1,12 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Button } from '../Button/Button';
+import { CharacterCounter } from '../CharacterCounter/CharacterCounter';
 import { Toggle } from '../Toggle/Toggle';
 import styles from './UpdateForm.module.css';
 
 const TITLE_MAX_LENGTH = 100;
-const CONTENT_MAX_LENGTH = 10000;
+const CONTENT_MAX_LENGTH = 10_000;
 const DEFAULT_AUTHOR = 'Petra Petitionsstarterin';
-
-const formatCount = (value: number) => value.toLocaleString('de-DE');
 
 export function UpdateForm() {
   const [title, setTitle] = useState('');
@@ -16,13 +15,7 @@ export function UpdateForm() {
   const [customAuthor, setCustomAuthor] = useState('');
 
   const authorInputRef = useRef<HTMLInputElement>(null);
-
-  const titleId = useId();
-  const titleCounterId = useId();
-  const contentId = useId();
-  const contentCounterId = useId();
-  const authorId = useId();
-  const authorToggleId = useId();
+  const ids = useFieldIds();
 
   useEffect(() => {
     if (hasCustomAuthor) {
@@ -33,47 +26,52 @@ export function UpdateForm() {
   return (
     <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
       <div className={styles.field}>
-        <label className={styles.label} htmlFor={titleId}>
+        <label className={styles.label} htmlFor={ids.title}>
           Titel
         </label>
         <input
-          id={titleId}
+          id={ids.title}
           className={styles.input}
           type="text"
           value={title}
           maxLength={TITLE_MAX_LENGTH}
-          aria-describedby={titleCounterId}
+          aria-describedby={ids.titleCounter}
           onChange={(event) => setTitle(event.target.value)}
         />
-        <p id={titleCounterId} className={styles.counter} aria-live="polite">
-          {formatCount(title.length)} / {formatCount(TITLE_MAX_LENGTH)} Zeichen
-        </p>
+        <CharacterCounter
+          id={ids.titleCounter}
+          current={title.length}
+          max={TITLE_MAX_LENGTH}
+        />
       </div>
 
       <div className={styles.field}>
-        <label className={styles.label} htmlFor={contentId}>
+        <label className={styles.label} htmlFor={ids.content}>
           Deine Neuigkeiten
         </label>
         <textarea
-          id={contentId}
+          id={ids.content}
           className={styles.textarea}
           value={content}
           rows={5}
           maxLength={CONTENT_MAX_LENGTH}
           placeholder="Bitte schreibe ein paar Worte zu deinem Update."
-          aria-describedby={contentCounterId}
+          aria-describedby={ids.contentCounter}
           onChange={(event) => setContent(event.target.value)}
         />
-        <p id={contentCounterId} className={styles.counter} aria-live="polite">
-          {formatCount(content.length)} / {formatCount(CONTENT_MAX_LENGTH)} Zeichen
-        </p>
+        <CharacterCounter
+          id={ids.contentCounter}
+          current={content.length}
+          max={CONTENT_MAX_LENGTH}
+        />
       </div>
 
+      {/* Author Field Block */}
       <div className={styles.field}>
         <div className={styles.authorHeader}>
           <span className={styles.label}>Absender</span>
           <Toggle
-            id={authorToggleId}
+            id={ids.authorToggle}
             label="Absender ändern"
             checked={hasCustomAuthor}
             onChange={setHasCustomAuthor}
@@ -84,11 +82,11 @@ export function UpdateForm() {
           Hier hast du die Option, das Update unter einem anderen Namen zu veröffentlichen.
         </p>
         
-        <label className={styles.smallLabel} htmlFor={authorId}>
+        <label className={styles.smallLabel} htmlFor={ids.author}>
           Absender
         </label>
         <input
-          id={authorId}
+          id={ids.author}
           ref={authorInputRef}
           className={styles.input}
           type="text"
@@ -101,16 +99,31 @@ export function UpdateForm() {
       </div>
 
       <div className={styles.actions} role="group" aria-label="Aktionen für Beitrag">
-        <Button type="button" variant="outline">
-          Abbrechen
-        </Button>
-        <Button type="submit" variant="primary">
-          Entwurf speichern
-        </Button>
+        <div className={styles.secondaryActions}>
+          <Button type="button" variant="outline">
+            Abbrechen
+          </Button>
+          <Button type="submit" variant="primary">
+            Entwurf speichern
+          </Button>
+        </div>
+        
         <Button type="submit" variant="accent">
           Update veröffentlichen
         </Button>
       </div>
     </form>
   );
+}
+
+function useFieldIds() {
+  const prefix = useId();
+  return {
+    title: `${prefix}-title`,
+    titleCounter: `${prefix}-title-counter`,
+    content: `${prefix}-content`,
+    contentCounter: `${prefix}-content-counter`,
+    author: `${prefix}-author`,
+    authorToggle: `${prefix}-author-toggle`,
+  };
 }

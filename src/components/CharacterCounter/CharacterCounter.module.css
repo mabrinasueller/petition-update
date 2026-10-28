@@ -1,0 +1,10 @@
+.counter {
+    margin: 0.25rem 0 0;
+    text-align: right;
+    font-size: var(--font-size-caption);
+    color: var(--color-text-muted);
+}
+
+.counter[data-exceeded] {
+    color: var(--color-error);
+}

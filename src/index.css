@@ -24,6 +24,9 @@
   --color-orange-hover: #e8641f;
   --color-focus: #7610e4;
   --color-modal-border: #e5e5e5;
+  --color-focus: #7610e4;
+  --color-error: #b3261e;
+  --color-modal-border: #e5e5e5;
   --radius-modal: 16px;
   --radius-control: 6px;
   --radius-pill: 999px;
